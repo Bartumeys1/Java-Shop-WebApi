@@ -1,15 +1,18 @@
 package shop.controllers;
 
 import jakarta.websocket.server.PathParam;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.dto.CategoryDTO;
 import shop.dto.viewModels.CategoryUpdateVM;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+
 
 @RestController
+@AllArgsConstructor
 public class HomeController {
     private static List<CategoryDTO> list = new ArrayList<CategoryDTO>(){{
         add(new CategoryDTO(1,"Test1"));
