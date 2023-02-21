@@ -5,7 +5,7 @@ list:ICategoryItem[]
 }
 
 const CategoryTable:React.FC<ICategoryTableProps> = ({list}) =>{
-  
+
   const itemRow = list.map((prev) => {
     return (
       <tr key={prev.id}>
