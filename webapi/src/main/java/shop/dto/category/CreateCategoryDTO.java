@@ -6,5 +6,5 @@ import lombok.Data;
 public class CreateCategoryDTO {
     private String name;
     private String description;
-    private String image;
+    private String imageBase64;
 }

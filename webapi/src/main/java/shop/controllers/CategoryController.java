@@ -9,6 +9,7 @@ import shop.dto.category.CreateCategoryDTO;
 import shop.dto.viewModels.CategoryUpdateVM;
 import shop.entities.CategoryEntity;
 import shop.repositories.CategoryRepository;
+import shop.storage.StorageService;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("api/categories")
 public class CategoryController {
     private final CategoryRepository _categoryRepository;
+    private final StorageService storageService;
 
     @GetMapping
     public ResponseEntity<List<CategoryEntity>> index() {
@@ -26,12 +28,21 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryEntity> create(@RequestBody CreateCategoryDTO model) {
-        CategoryEntity category = new CategoryEntity();
-        category.setName(model.getName());
-        category.setDescription(model.getDescription());
-        category.setImage(model.getImage());
-        _categoryRepository.save(category);
-        return new ResponseEntity<>(category, HttpStatus.CREATED);
+        try {
+            CategoryEntity category = new CategoryEntity();
+            category.setName(model.getName());
+            category.setDescription(model.getDescription());
+
+            String fileName = storageService.save(model.getImageBase64());
+            category.setImage(fileName);
+
+            _categoryRepository.save(category);
+            return new ResponseEntity<>(category, HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
+        }
+
     }
 
     @PutMapping
@@ -43,7 +54,8 @@ public class CategoryController {
         CategoryEntity cat = category.get();
         cat.setName(model.getName());
         cat.setDescription(model.getDescription());
-        cat.setImage(model.getImage());
+
+        storageService.updateFile(cat.getImage(),model.getImageBase64());
         _categoryRepository.save(cat);
         return new ResponseEntity<>(cat, HttpStatus.OK);
 
@@ -57,9 +69,15 @@ public class CategoryController {
             return new ResponseEntity<>("Not found id:" + id, HttpStatus.BAD_REQUEST);
 
         CategoryEntity cat = category.get();
-        _categoryRepository.delete(cat);
-        return new ResponseEntity<>("delete element \"" + cat.getName() + "\"", HttpStatus.OK);
+        Boolean result = storageService.deleteFile(cat.getImage());
 
+        if (result)
+        {
+            _categoryRepository.delete(cat);
+            return new ResponseEntity<>("delete element \"" + cat.getName() + "\"", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Not deleted \"" + cat.getName() + "\"", HttpStatus.OK);
     }
 
     @GetMapping("{id}")

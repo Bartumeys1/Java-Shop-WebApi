@@ -7,13 +7,13 @@ public class CategoryUpdateVM {
     private int id;
     private String name;
     private String description;
-    private String image;
+    private String imageBase64;
     public CategoryUpdateVM() {
     }
 
-    public CategoryUpdateVM(String name, String description, String image) {
+    public CategoryUpdateVM(String name, String description, String imageBase64) {
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.imageBase64 = imageBase64;
     }
 }
