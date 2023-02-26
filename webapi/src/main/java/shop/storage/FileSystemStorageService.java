@@ -60,7 +60,9 @@ public class FileSystemStorageService implements StorageService{
             byte [] bytes = new byte[0];
             bytes = decoder.decode(charArray[1]);
             String folder = rootlocation.toString()+"/"+randomFileName;
-            new FileOutputStream(folder).write(bytes);
+            try(FileOutputStream stream = new FileOutputStream(folder)){
+                stream.write(bytes);
+            }
             return randomFileName;
         } catch (IOException e) {
             throw new StorageException("Проблема перетворення та збереження base64", e);
@@ -96,8 +98,9 @@ public class FileSystemStorageService implements StorageService{
             byte [] bytes = new byte[0];
             bytes = decoder.decode(charArray[1]);
             String fullPath = rootlocation.resolve(oldFileName).toString();
-            new FileOutputStream(fullPath).write(bytes);
-            
+            try(FileOutputStream stream = new FileOutputStream(fullPath)){
+                stream.write(bytes);
+            }
         } catch (Exception e) {
             throw new StorageException("Failed to save file ", e);
         }

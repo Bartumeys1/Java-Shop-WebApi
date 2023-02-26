@@ -1,21 +1,78 @@
-import { Field, Formik } from "formik";
+import axios from "axios";
+import { ErrorMessage, Field, Formik } from "formik";
+import { useRef, useState } from "react";
+import { redirect, useNavigate } from "react-router-dom";
+import { CreateCategoryValidatorShema } from "../store/ValidateCategory";
 
 interface ICreateCategoryItem{
   name: string,
   description:string,
-  image:string
+  imageBase64:string
 }
 
 const CreateCategory = () =>{
-    const initialValues:ICreateCategoryItem = {
+   
+  const [imageBase64, setImageBase64] = useState<string>("")
+  const [currentImage, setCurrentImage] = useState<string>(
+    "https://cdn3.iconfinder.com/data/icons/photo-tools/65/select-512.png"
+  );
+  const [isResizeImage, setIsResizeImage] = useState<boolean>(false)
+  const [isSelectImage, setIsSelectImage] = useState<boolean>(false)
+  const navigat = useNavigate();
+
+
+  const initialValues:ICreateCategoryItem = {
 		name: "",
     description:"",
-    image:""
+    imageBase64:""
 	};
 
   const handelSubmit = (category:ICreateCategoryItem) =>{
-    console.log("Submit...: ", category);
+    category.imageBase64=imageBase64;
+    
+    axios.post("http://localhost:8083/api/categories" , category).then(res =>{
+      console.log("Server response",res);
+      const {data} = res;
+      console.log("res", data);
+      navigat("/");
+    });
+
+};
+
+const handlerSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (files && files.length) {
+    const file = files[0];
+    if (/^image\/\w+/.test(file.type)) {
+      getBase64(file, (result) => {
+        setImageBase64(result);
+        setCurrentImage(result);
+        setIsResizeImage(true);
+        setIsSelectImage(true);
+      });
+    }
+  } else {
+    alert("Оберіть файл зображення");
   }
+  e.target.value = "";
+};
+
+const getBase64 = (file: File, cb: (result: string) => void) => {
+  const fr: FileReader = new FileReader();
+  fr.readAsDataURL(file);
+  fr.onload = function () {
+    cb(fr.result as string);
+  };
+};
+
+const errorMessage = (fieldType: string, color: string = "red") => {
+  return (
+    <ErrorMessage name={fieldType}>
+      {(msg) => <div style={{ color: color }}>{msg}</div>}
+    </ErrorMessage>
+  );
+};
+
 return (
   <>
     <div className=" w-auto">
@@ -31,6 +88,7 @@ return (
           <Formik
             initialValues={initialValues}
             onSubmit={handelSubmit}
+            validationSchema={CreateCategoryValidatorShema}
           >
             {(formik) => (
               <form onSubmit={formik.handleSubmit}>
@@ -45,11 +103,13 @@ return (
                           Name
                         </label>
                         <div className="mt-1">
-                          <Field as="input"
+                          <Field
+                            as="input"
                             id="name"
                             name="name"
                             className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative "
                           />
+                          {errorMessage("name")}
                         </div>
                       </div>
                       <div>
@@ -59,28 +119,42 @@ return (
                         >
                           Description
                         </label>
-                        <Field as="textarea"
+                        <Field
+                          as="textarea"
                           id="description"
                           name="description"
                           className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full h-[300px]  relative resize-none"
                         />
+                        {errorMessage("description")}
                       </div>
                       <div>
                         <label
                           htmlFor="image"
                           className="block text-lg font-medium text-gray-700"
                         >
-                          ImageUrl
+                          Select image
+                          <img
+                            src={currentImage}
+                            style={{ cursor: "pointer" }}
+                            width="150"
+                            className={
+                              isResizeImage ? "w-full max-h-[450px]" : ""
+                            }
+                          />
                         </label>
-                        <Field as="input"
+                        <Field
+                          type="file"
                           id="image"
                           name="image"
-                          className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative"
+                          className="hidden"
+                          onChange={handlerSelectImage}
                         />
+
                       </div>
                     </div>
                     <div className=" px-auto py-3 text-center sm:px-6">
                       <button
+                        disabled={!formik.isValid && !isSelectImage }
                         type="submit"
                         className=" rounded-md border border-transparent bg-indigo-600 px-4 py-2  font-medium text-white shadow-sm hover:bg-indigo-700"
                       >

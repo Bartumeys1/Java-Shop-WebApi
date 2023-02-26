@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dto.CategoryDTO;
+import shop.dto.category.CategoryItemDTO;
 import shop.dto.UploadImageDto;
 import shop.dto.viewModels.CategoryUpdateVM;
 import shop.storage.StorageService;
@@ -23,19 +23,14 @@ import java.util.List;
 @AllArgsConstructor
 public class HomeController {
     private final StorageService storageService;
-    private static List<CategoryDTO> list = new ArrayList<CategoryDTO>(){{
-        add(new CategoryDTO(1,"Test1"));
-        add(new CategoryDTO(2,"Test2"));
-        add(new CategoryDTO(3,"Test3"));
-
-    }};
+    private static List<CategoryItemDTO> list = new ArrayList<CategoryItemDTO>();
     @GetMapping("/")
-    public List<CategoryDTO> index(){
+    public List<CategoryItemDTO> index(){
         return list;
     }
 
     @PostMapping("/")
-    public void add(@RequestBody CategoryDTO model){
+    public void add(@RequestBody CategoryItemDTO model){
         list.add(model);
     }
     @DeleteMapping("/")

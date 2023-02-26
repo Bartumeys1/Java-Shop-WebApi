@@ -1,14 +1,15 @@
-import { Formik } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
+import { RegistrationValidatorShema } from "./store/ValidateRegistration";
 
 interface IRegistration{
-    username:string,
+    email:string,
     password:string,
     confirm:string
 }
 
 const Registration = ()=>{
   const initialValues: IRegistration = {
-    username: "",
+    email: "",
     password: "",
     confirm: "",
   };
@@ -16,11 +17,19 @@ const Registration = ()=>{
     console.log("Registation item: ", item);
   };
 
+  const errorMessage = (fieldType: string, color: string = "red") => {
+    return (
+      <ErrorMessage name={fieldType}>
+        {(msg) => <div style={{ color: color }}>{msg}</div>}
+      </ErrorMessage>
+    );
+  };
+
   return (
     <>
       <div className="relative w-full flex flex-col justify-center mt-[150px] ">
         <div className="max-w-[500px] w-full mx-auto bg-gray-50 p-4">
-          <Formik initialValues={initialValues} onSubmit={onNext}>
+          <Formik initialValues={initialValues} onSubmit={onNext} validationSchema={RegistrationValidatorShema}>
             {(formik) => (
               <form onSubmit={formik.handleSubmit}>
                 <h2 className=" text-4xl font-bold text-center py-6 flex flex-row justify-center">
@@ -32,37 +41,40 @@ const Registration = ()=>{
                   Registration
                 </h2>
                 <div className="flex flex-col py-2">
-                  <label htmlFor="username" className="text-lg font-[500]">
-                    Username
+                  <label htmlFor="usernemailame" className="text-lg font-[500]">
+                  Email
                   </label>
-                  <input
+                  <Field
                     type="text"
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
                   />
+                  {errorMessage("email")}
                 </div>
                 <div className="flex flex-col py-2">
                   <label htmlFor="password" className="text-lg font-[500]">
                     Password
                   </label>
-                  <input
+                  <Field
                     type="password"
                     id="password"
                     name="password"
                     className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
                   />
+                  {errorMessage("password")}
                 </div>
                 <div className="flex flex-col py-2">
                   <label htmlFor="confirm" className="text-lg font-[500]">
                     Confirm password
                   </label>
-                  <input
+                  <Field
                     type="password"
                     id="confirm"
                     name="confirm"
                     className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
                   />
+                  {errorMessage("confirm")}
                 </div>
 
                 <button

@@ -1,14 +1,15 @@
-import { Field, Formik } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { Link } from "react-router-dom";
+import { LoginValidatorSchema } from "./store/ValideteLogin";
 
 interface ILoginItem{
-    username:string,
+    email:string,
     password:string
 }
 
 const Login = () =>{
     const initialValues:ILoginItem={
-        username:"",
+      email:"",
         password:""
     }
     const handleLogin=(item:ILoginItem)=>{
@@ -16,11 +17,23 @@ const Login = () =>{
         //send data and get response
         //redirect....
     }
+
+    const errorMessage = (fieldType: string, color: string = "red") => {
+      return (
+        <ErrorMessage name={fieldType}>
+          {(msg) => <div style={{ color: color }}>{msg}</div>}
+        </ErrorMessage>
+      );
+    };
+
     return (
       <>
         <div className="relative w-full flex flex-col justify-center mt-[150px] ">
           <div className="max-w-[400px] w-full mx-auto bg-gray-50 p-4">
-            <Formik initialValues={initialValues} onSubmit={handleLogin}>
+            <Formik 
+            initialValues={initialValues} 
+            onSubmit={handleLogin}
+            validationSchema ={LoginValidatorSchema}>
               {(formik) => (
                 <form onSubmit={formik.handleSubmit}>
                   <h2 className=" text-4xl font-bold text-center py-6 flex flex-row justify-center">
@@ -32,15 +45,16 @@ const Login = () =>{
                     LOGIN
                   </h2>
                   <div className="flex flex-col py-2">
-                    <label htmlFor="username" className="text-lg font-[500]">
-                      Username
+                    <label htmlFor="email" className="text-lg font-[500]">
+                    Email
                     </label>
                     <Field
                       type="text"
-                      id="username"
-                      name="username"
+                      id="email"
+                      name="email"
                       className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
                     />
+                    {errorMessage("email")}
                   </div>
                   <div className="flex flex-col py-2">
                     <label htmlFor="password" className="text-lg font-[500]">
@@ -52,11 +66,13 @@ const Login = () =>{
                       name="password"
                       className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
                     />
+                    {errorMessage("password")}
                   </div>
                   <div className="flex flex-col py-2 ">
                     <button
+                    disabled={!formik.isValid}
                       type="submit"
-                      className="w-full py-2 my-2 text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-700"
+                      className={`w-full py-2 my-2 text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-700`}
                     >
                       Sign In
                     </button>

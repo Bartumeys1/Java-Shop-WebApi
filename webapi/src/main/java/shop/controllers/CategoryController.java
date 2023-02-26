@@ -1,13 +1,16 @@
 package shop.controllers;
 
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.dto.category.CategoryItemDTO;
 import shop.dto.category.CreateCategoryDTO;
-import shop.dto.viewModels.CategoryUpdateVM;
+import shop.dto.category.UpdateCategoryDTO;
 import shop.entities.CategoryEntity;
+import shop.mapper.CategoryMapper;
 import shop.repositories.CategoryRepository;
 import shop.storage.StorageService;
 
@@ -19,34 +22,32 @@ import java.util.List;
 public class CategoryController {
     private final CategoryRepository _categoryRepository;
     private final StorageService storageService;
+    private final CategoryMapper categoryMapper;
 
     @GetMapping
-    public ResponseEntity<List<CategoryEntity>> index() {
+    public ResponseEntity<List<CategoryItemDTO>> index() {
         var list = _categoryRepository.findAll();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        var model = categoryMapper.CategoryItemDTOsToCategories(list);
+        return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<CategoryEntity> create(@RequestBody CreateCategoryDTO model) {
+    public ResponseEntity<CategoryItemDTO> create(@Valid @RequestBody CreateCategoryDTO model) {
         try {
-            CategoryEntity category = new CategoryEntity();
-            category.setName(model.getName());
-            category.setDescription(model.getDescription());
+            var category = categoryMapper.CategoryByCreateCategoryGTO(model);
 
             String fileName = storageService.save(model.getImageBase64());
             category.setImage(fileName);
-
             _categoryRepository.save(category);
-            return new ResponseEntity<>(category, HttpStatus.CREATED);
+            var catDTO = categoryMapper.CategoryItemDTOByCategory(category);
+            return new ResponseEntity<>(catDTO, HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
         }
-
     }
 
     @PutMapping
-    public ResponseEntity<CategoryEntity> update(@RequestBody CategoryUpdateVM model) {
+    public ResponseEntity<CategoryItemDTO> update(@Valid @RequestBody UpdateCategoryDTO model) {
         var category = _categoryRepository.findById(model.getId());
         if (!category.isPresent())
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -57,7 +58,8 @@ public class CategoryController {
 
         storageService.updateFile(cat.getImage(),model.getImageBase64());
         _categoryRepository.save(cat);
-        return new ResponseEntity<>(cat, HttpStatus.OK);
+        var catDTO = categoryMapper.CategoryItemDTOByCategory(cat);
+        return new ResponseEntity<>(catDTO, HttpStatus.OK);
 
 
     }
