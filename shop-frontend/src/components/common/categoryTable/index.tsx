@@ -9,7 +9,8 @@ list:ICategoryItem[]
 const CategoryTable:React.FC<ICategoryTableProps> = ({list}) =>{
   const navigat = useNavigate();
 
-  const itemRow = list.map((prev) => {
+  const categoryList = list;
+  const itemRow = categoryList.map((prev) => {
     return (
       <tr key={prev.id}>
         <th scope="row">{prev.id}</th>

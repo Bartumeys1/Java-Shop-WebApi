@@ -7,50 +7,56 @@ import { CreateCategoryValidatorShema } from "../store/ValidateCategory";
 interface ICreateCategoryItem{
   name: string,
   description:string,
-  imageBase64:string
+  file:File|null|undefined
 }
 
 const CreateCategory = () =>{
    
-  const [imageBase64, setImageBase64] = useState<string>("")
   const [currentImage, setCurrentImage] = useState<string>(
     "https://cdn3.iconfinder.com/data/icons/photo-tools/65/select-512.png"
   );
   const [isResizeImage, setIsResizeImage] = useState<boolean>(false)
   const [isSelectImage, setIsSelectImage] = useState<boolean>(false)
+  const [currentFile, setCurrentFile] = useState<File>()
   const navigat = useNavigate();
 
 
   const initialValues:ICreateCategoryItem = {
 		name: "",
     description:"",
-    imageBase64:""
+    file:null
 	};
 
-  const handelSubmit = (category:ICreateCategoryItem) =>{
-    category.imageBase64=imageBase64;
+  const handelSubmit = async (category:ICreateCategoryItem) =>{
+    console.log("subm: ",category);
     
-    axios.post("http://localhost:8083/api/categories" , category).then(res =>{
-      console.log("Server response",res);
-      const {data} = res;
-      console.log("res", data);
-      navigat("/");
-    });
-
+    try{
+      category.file=currentFile;
+      const item =await axios.post("http://localhost:8083/api/categories", category,{
+        headers:{"Content-Type":"multipart/form-data"}
+      });
+            console.log("Server save category", item);
+            navigat("/");
+    }catch(error:any){
+      console.log("Щось пішло не так", error);
+    }
 };
 
 const handlerSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const files = e.target.files;
   if (files && files.length) {
     const file = files[0];
-    if (/^image\/\w+/.test(file.type)) {
-      getBase64(file, (result) => {
-        setImageBase64(result);
-        setCurrentImage(result);
-        setIsResizeImage(true);
-        setIsSelectImage(true);
-      });
-    }
+    setCurrentImage(URL.createObjectURL(file));
+    setCurrentFile(file);
+    setIsResizeImage(true);
+    setIsSelectImage(true);
+    // if (/^image\/\w+/.test(file.type)) {
+    //   getBase64(file, (result) => {
+    //     setCurrentImage(result);
+    //     setIsResizeImage(true);
+    //     setIsSelectImage(true);
+    //   });
+    // }
   } else {
     alert("Оберіть файл зображення");
   }
@@ -129,7 +135,7 @@ return (
                       </div>
                       <div>
                         <label
-                          htmlFor="image"
+                          htmlFor="file"
                           className="block text-lg font-medium text-gray-700"
                         >
                           Select image
@@ -143,9 +149,10 @@ return (
                           />
                         </label>
                         <Field
+                        value = ""
                           type="file"
-                          id="image"
-                          name="image"
+                          id="file"
+                          name="file"
                           className="hidden"
                           onChange={handlerSelectImage}
                         />
@@ -154,7 +161,7 @@ return (
                     </div>
                     <div className=" px-auto py-3 text-center sm:px-6">
                       <button
-                        disabled={!formik.isValid && !isSelectImage }
+                        disabled={!(formik.isValid && isSelectImage) }
                         type="submit"
                         className=" rounded-md border border-transparent bg-indigo-600 px-4 py-2  font-medium text-white shadow-sm hover:bg-indigo-700"
                       >

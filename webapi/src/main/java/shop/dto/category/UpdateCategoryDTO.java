@@ -1,11 +1,13 @@
 package shop.dto.category;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class UpdateCategoryDTO {
-    @NotBlank(message = "Id is mandatory")
+
+    @Min(0)
     private int id;
     @NotBlank(message = "Name is mandatory")
     private String name;
