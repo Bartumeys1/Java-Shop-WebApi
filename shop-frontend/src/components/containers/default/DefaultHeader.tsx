@@ -166,11 +166,11 @@ const DefaultHeader = () => {
               )}
             </Popover>
 
-            <Link to="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-              Pricing
+            <Link to="/" className="text-base font-medium text-gray-500 hover:text-gray-900">
+              Categories
             </Link>
-            <Link to="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
-              Docs
+            <Link to="/products" className="text-base font-medium text-gray-500 hover:text-gray-900">
+              Products
             </Link>
 
             <Popover className="relative">
