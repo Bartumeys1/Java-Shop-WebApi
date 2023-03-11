@@ -10,6 +10,6 @@ import shop.entities.ProductEntity;
 
 public interface ProductMapper {
     ProductEntity ProductByProductCreateDTO (ProductCreateDTO model);
-    @Mapping(target = "category" , ignore = true)
+    @Mapping(source = "category.name", target = "category")
     ProductItemDTO ProductItemDTOByProductEntity(ProductEntity product);
 }

@@ -5,7 +5,7 @@ const SUPPORTED_FORMATS = [
     "image/jpeg",
     "image/gif",
     "image/png"
-  ];
+  ];  
 
 export const CreateCategoryValidatorShema = Yup.object().shape({
     name: Yup.string().required("Required").label("Name"),

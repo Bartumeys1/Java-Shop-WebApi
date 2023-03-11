@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { APP_ENV } from "../../env";
 import CategoryTable from "../common/categoryTable";
 import { ICategoryItem } from "./store/type";
 
@@ -8,7 +9,7 @@ const Categories:React.FC=()=>{
 
     const [list , setList] = useState<ICategoryItem[]>([]);
     useEffect(() => {
-      axios.get("http://localhost:8083/api/categories").then(res =>{
+      axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res =>{
         console.log("Server response",res);
         const {data} = res;
         setList(data);
@@ -20,7 +21,7 @@ const Categories:React.FC=()=>{
       <div key={callout.name} className="group relative">
         <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
           <img
-            src={"http://localhost:8083/files/600_"+callout.image}
+            src={`${APP_ENV.REMOTE_HOST_NAME}files/600_`+callout.image}
             alt={"callout.imageAlt"}
             className="h-full w-full object-cover object-center"
           />

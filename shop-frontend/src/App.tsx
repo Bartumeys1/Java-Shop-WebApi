@@ -8,6 +8,7 @@ import Home from "./components/home";
 import NotFoundPage from "./components/notFound";
 import Product from "./components/product";
 import CreateProduct from "./components/product/createProduct";
+import EditProductPage from "./components/product/editProduct";
 
 const App =() => {
     return (
@@ -20,6 +21,7 @@ const App =() => {
           <Route path="category-table-test" element={<CategoryTableTest />} />
           <Route path="products" element={<Product />} />
           <Route path="product/create" element={<CreateProduct />} />
+          <Route path="product/edit/:id" element={<EditProductPage />} />
         <Route path="*" element={<NotFoundPage/>}/>
         </Route>
       </Routes>

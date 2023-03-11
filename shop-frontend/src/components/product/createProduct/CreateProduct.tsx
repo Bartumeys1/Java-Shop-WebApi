@@ -1,6 +1,8 @@
 import axios from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
+import { url } from "inspector";
+import { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
 import { IProductCreateDTO } from "../store/type";
 
@@ -8,12 +10,12 @@ const CreateProduct:React.FC = ()=>{
 
     const navigator = useNavigate();
     const [listCategories, setSelectorCategories] = useState<ICategoryItem[]>([]);
-    const [productDTO, setproductDTO] = useState<IProductCreateDTO>({
+    const [productDTO, setProductDTO] = useState<IProductCreateDTO>({
         name:"",
         description:"",
         price:0.00,
         category_id:"",
-        images:null        
+        images:[]        
     });
 
     useEffect(()=>{
@@ -22,7 +24,7 @@ const CreateProduct:React.FC = ()=>{
     
     const getDataFromServer = async() => {
         try{
-             await axios.get<ICategoryItem[]>("http://localhost:8083/api/categories").then(res=>{
+             await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res=>{
                 const {data} = res;
                 setSelectorCategories(data);
              });
@@ -35,7 +37,7 @@ const CreateProduct:React.FC = ()=>{
 
       const onChangeHandler = (e: ChangeEvent<HTMLInputElement>| ChangeEvent<HTMLTextAreaElement> |ChangeEvent<HTMLSelectElement> ) => {
         //console.log(e.target.name, e.target.value);
-        setproductDTO({...productDTO, [e.target.name]: e.target.value});
+        setProductDTO({...productDTO, [e.target.name]: e.target.value});
     }
 
       const onFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,12 +45,15 @@ const CreateProduct:React.FC = ()=>{
         const {target} = e;
         const {files} = target;
         if(files) {
-            const arr = Array.from(files);
-            console.log("Images: ",files);
-            
-            setproductDTO({...productDTO,images:arr})
+            const file = files[0];
+            setProductDTO({...productDTO,images:[...productDTO.images,file]})
         }
         target.value="";
+    }
+
+    const onDeleteHandler=( name:string)=>{
+      var newL = productDTO.images?.filter(image => !image.name.includes(name)) as File[];
+      setProductDTO({...productDTO,images:newL });
     }
 
     const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,14 +61,13 @@ const CreateProduct:React.FC = ()=>{
         try {
             console.log("ProductDTO: ",productDTO);
             const item = await axios
-              .post("http://localhost:8083/api/products", 
+              .post(`${APP_ENV.REMOTE_HOST_NAME}api/products`, 
               productDTO, 
                 {
                   headers: {
                     "Content-Type": "multipart/form-data"
                   }
                 });
-            console.log("Server save category", item);
             navigator("/products");
         }catch(error: any) {
             console.log("Щось пішло не так", error);
@@ -73,14 +77,29 @@ const CreateProduct:React.FC = ()=>{
 
       const selectorCategoriesItems = listCategories.map((item)=>{
         return <option key={item.id} value={item.id}>{item.name}</option>
-      });
+      }); 
       const selectImageList = productDTO.images?.map((image,index)=>{
-        return <img key={index} src={URL.createObjectURL(image)} className="flex-1 w-30" />
+        return (
+          <div key={index} id="image" className="flex relative">
+            <input
+              type={"button"}
+              value={"x"}
+              className=" absolute bg-slate-400 px-1 cursor-pointer hover:bg-slate-300 active:bg-slate-500 rounded-md top-0 right-0 mr-1 mt-1"
+              onClick={() => {
+                onDeleteHandler(image.name);
+              }}
+            />
+            <img
+              src={URL.createObjectURL(image)}
+              className="flex-1 w-30 rounded-md"
+            />
+          </div>
+        );
       });
     return (
       <>
         <div className="p-8 rounded border border-gray-200">
-          <h1 className="font-medium text-3xl">Додати категорію</h1>
+          <h1 className="font-medium text-3xl">Створити новий продукт</h1>
 
           <form onSubmit={onSubmitHandler}>
             <div className="mt-8 grid lg:grid-cols-1 gap-4">
@@ -160,25 +179,28 @@ const CreateProduct:React.FC = ()=>{
                 </label>
 
                 <div className="mt-1 flex items-center">
-                  <label
-                    htmlFor="selectImage"
+                  <div
                     className="inline-block w-full overflow-hidden"
 
                   >
-                    {productDTO.images === null ? (
-                      <svg
+                    {productDTO.images.length === 0 ? (
+                      <label
+                      htmlFor="selectImage">
+ <svg
                         className="h-full w-20 text-gray-300"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                       </svg>
+                      </label>
+                     
                     ) : (
                         <div className=" inline-grid grid-cols-4 sm:grid-cols-10 gap-2">
                         {selectImageList}
                         </div>
                     )}
-                  </label>
+                  </div>
                  
                 </div>
                 <div className="mt-4"> <label

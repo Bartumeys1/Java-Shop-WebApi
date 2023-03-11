@@ -104,9 +104,9 @@ public class FileSystemStorageService implements StorageService {
             Path filePath = load(size + "_" + fileName);
             File file = new File(filePath.toString());
             if (file.delete()) {
-                System.out.println(fileName + " Файл видалено.");
+                System.out.println(size+"_"+fileName + " Файл видалено.");
             } else {
-                System.out.println(fileName + " Файл не знайдено.");
+                System.out.println(size+"_"+fileName + " Файл не знайдено.");
                 isSuccess = false;
             }
         }

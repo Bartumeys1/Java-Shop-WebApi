@@ -2,6 +2,7 @@ import axios from "axios";
 import { ErrorMessage, Field, Formik } from "formik";
 import {  useState } from "react";
 import {  useNavigate } from "react-router-dom";
+import { APP_ENV } from "../../../env";
 import { CreateCategoryValidatorShema } from "../store/ValidateCategory";
 
 interface ICreateCategoryItem{
@@ -32,7 +33,7 @@ const CreateCategory = () =>{
     
     try{
       category.file=currentFile;
-      const item =await axios.post("http://localhost:8083/api/categories", category,{
+      const item =await axios.post(`${APP_ENV.REMOTE_HOST_NAME}api/categories`, category,{
         headers:{"Content-Type":"multipart/form-data"}
       });
             console.log("Server save category", item);
