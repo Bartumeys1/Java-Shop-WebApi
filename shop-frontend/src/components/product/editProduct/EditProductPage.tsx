@@ -3,7 +3,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
-import Product from "../ProductView";
 import { IProductEditDTO, IProductItem } from "../store/type";
 
 const EditProductPage: React.FC = () => {
@@ -20,7 +19,6 @@ const EditProductPage: React.FC = () => {
     images: [],
   });
   const params = useParams();
-var categoryDefaultValue=0;
 
   useEffect(() => {
     getDataFromServer();
@@ -28,12 +26,11 @@ var categoryDefaultValue=0;
 
   const getDataFromServer = async () => {
     try {
-     var catListResult = await axios
+         await axios
         .get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`)
         .then((res) => {
           const { data } = res;
-          setListCategories(data); 
-          return data;        
+          setListCategories(data);      
         });
 
      await axios
@@ -44,14 +41,12 @@ var categoryDefaultValue=0;
          const { data } = res;
          setLoadedImageList(data.images);
         
-         var listItemsCategory = catListResult.filter(cat=>{return cat.name===data.category}); // костиль ??????
-
          const product: IProductEditDTO = {
            id: data.id,
            name: data.name,
            description: data.description,
            price: data.price,
-           category_id: listItemsCategory[0].id,
+           category_id: data.category_id,
            remoteImages: [],
            images: [],
          };
@@ -279,7 +274,7 @@ var categoryDefaultValue=0;
               type="submit"
               className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50"
             >
-              Додати
+              Редагувати
             </button>
             <Link
               to="/"

@@ -23,7 +23,7 @@ const Categories:React.FC=()=>{
           <img
             src={`${APP_ENV.REMOTE_HOST_NAME}files/600_`+callout.image}
             alt={"callout.imageAlt"}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-fill object-center"
           />
         </div>
         <h3 className="mt-6 text-sm text-gray-900">

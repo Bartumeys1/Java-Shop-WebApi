@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,9 @@ public class ProductEntity {
     private java.util.Date dateCreated;
     private  boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id" , nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CategoryEntity category;
 
 

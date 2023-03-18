@@ -84,7 +84,6 @@ public class ProductServiceImpl implements ProductService {
     public void delete(int id) {
         var product = _productRepository.findById(id).get();
         for (var image : product.getProductImages()) {
-            _imageRepository.delete(image);
             _storageService.deleteFile(image.getName());
         }
         _productRepository.delete(product);

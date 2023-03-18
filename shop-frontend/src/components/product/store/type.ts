@@ -22,5 +22,6 @@ export interface IProductItem{
     price: number,
     description:string,
     category:string,
+    category_id:number|string,
     images:Array<string>, 
  }
