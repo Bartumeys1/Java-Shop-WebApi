@@ -9,6 +9,7 @@ import NotFoundPage from "./components/notFound";
 import Product from "./components/product";
 import CreateProduct from "./components/product/createProduct";
 import EditProductPage from "./components/product/editProduct";
+import InfoProductPage from "./components/product/productInfo";
 
 const App =() => {
     return (
@@ -22,6 +23,7 @@ const App =() => {
           <Route path="products" element={<Product />} />
           <Route path="product/create" element={<CreateProduct />} />
           <Route path="product/edit/:id" element={<EditProductPage />} />
+          <Route path="product/info/:id" element={<InfoProductPage />} />
         <Route path="*" element={<NotFoundPage/>}/>
         </Route>
       </Routes>

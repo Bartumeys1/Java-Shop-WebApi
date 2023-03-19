@@ -2,14 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { APP_ENV } from "../../env";
+import Loader from "../common/loader";
 import ModalDelete from "../common/modal/ModalDelete";
 import { IProductItem } from "./store/type";
 
 const Product = () => {
   const [list, setlist] = useState<IProductItem[]>([]);
-  
+  const [isLoaded , setLoaded] = useState<boolean>(false);
+
   useEffect(() => {
-    getDataFromServer();
+    getAllDataFromServer();
   }, []);
 
   const deleteProductHandler  = async (id:number) => {
@@ -21,13 +23,14 @@ const Product = () => {
     }   
   };
 
-  const getDataFromServer = async () => {
+  const getAllDataFromServer = async () => {
     try {
       await axios
-        .get<IProductItem[]>("http://localhost:8083/api/products")
+        .get<IProductItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/products`)
         .then((result) => {
           const { data } = result;
           setlist(data);
+          setLoaded(true);
         });
     } catch (error: any) {
       console.log("Error: ", error);
@@ -46,7 +49,7 @@ const Product = () => {
           />
         </div>
         <h3 className="mt-8 text-sm text-gray-900">
-          <Link to={`/product/${product.id}`}>
+          <Link to={`/product/info/${product.id}`}>
             <span className="absolute inset-0" />
             <p className="font-bold text-xl text-center">{product.name}</p>
           </Link>
@@ -82,6 +85,8 @@ const Product = () => {
 
   return (
     <>
+     {!isLoaded &&
+      <Loader/>}
       <div className=" text-center pt-5">
         <Link
           to="/product/create"

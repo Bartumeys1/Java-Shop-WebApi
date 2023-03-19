@@ -3,12 +3,14 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
+import Loader from "../../common/loader";
 import { IProductEditDTO, IProductItem } from "../store/type";
 
 const EditProductPage: React.FC = () => {
   const navigator = useNavigate();
   const [listCategories, setListCategories] = useState<ICategoryItem[]>([]);
   const [loadedImageList, setLoadedImageList] = useState<string[]>([]);
+  const [isLoaded , setLoaded] = useState<boolean>(false);
   const [updateModel, setUpdateModel] = useState<IProductEditDTO>({
     id: 0,
     name: "",
@@ -51,10 +53,12 @@ const EditProductPage: React.FC = () => {
            images: [],
          };
          setUpdateModel(product);
+         setLoaded(true);
        });
         
     } catch (error: any) {
       console.log("Щось пішло не так: ", error);
+      setLoaded(true);
     }
   };
 
@@ -133,6 +137,7 @@ const EditProductPage: React.FC = () => {
         <img
           src={`${APP_ENV.REMOTE_HOST_NAME}files/300_` + image}
           className="flex-1 w-30 rounded-md"
+          alt=""
         />
       </div>
     );
@@ -151,6 +156,7 @@ const EditProductPage: React.FC = () => {
         <img
           src={URL.createObjectURL(image)}
           className="flex-1 w-30 rounded-md"
+          alt={image.name}
         />
       </div>
     );
@@ -162,7 +168,7 @@ const EditProductPage: React.FC = () => {
         <h1 className="font-medium text-3xl">
           Резагування продукту "{updateModel.name}"
         </h1>
-
+        {!isLoaded && <Loader />}
         <form onSubmit={onSubmitHandler}>
           <div className="mt-8 grid lg:grid-cols-1 gap-4">
             <div>
@@ -241,9 +247,9 @@ const EditProductPage: React.FC = () => {
               <div className="mt-1 flex items-center">
                 <div className="inline-block w-full overflow-hidden">
                   <div className=" inline-grid grid-cols-4 sm:grid-cols-10 gap-2">
-                      {currentProductImageList}
-                      {selectNewImageList}
-                    </div>
+                    {currentProductImageList}
+                    {selectNewImageList}
+                  </div>
                 </div>
               </div>
               <div className="mt-4">

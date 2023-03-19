@@ -303,21 +303,21 @@ const DefaultHeader = () => {
             </div>
             <div className="space-y-6 py-6 px-5">
               <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                <a href="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
+                <Link to="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
                   Pricing
-                </a>
+                </Link>
 
-                <a href="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
+                <Link to="#" className="text-base font-medium text-gray-900 hover:text-gray-700">
                   Docs
-                </a>
+                </Link>
                 {resources.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     className="text-base font-medium text-gray-900 hover:text-gray-700"
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
               {/* <div>
