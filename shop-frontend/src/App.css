@@ -35,8 +35,7 @@
     position: absolute;
     z-index: 2;
     display: none;
-    margin-top: 10px;
-    margin-left: 10px;
+
   }
   
   .imageView:hover .hideSection {

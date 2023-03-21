@@ -1,15 +1,17 @@
 import axios from "axios";
-import { url } from "inspector";
-import { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
+import Loader from "../../common/loader";
 import { IProductCreateDTO } from "../store/type";
 
 const CreateProduct:React.FC = ()=>{
 
     const navigator = useNavigate();
     const [listCategories, setSelectorCategories] = useState<ICategoryItem[]>([]);
+    const [isLoaded , setLoaded] = useState<boolean>(false);
     const [productDTO, setProductDTO] = useState<IProductCreateDTO>({
         name:"",
         description:"",
@@ -24,6 +26,7 @@ const CreateProduct:React.FC = ()=>{
     
     const getDataFromServer = async() => {
         try{
+          setLoaded(false);
              await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res=>{
                 const {data} = res;
                 setSelectorCategories(data);
@@ -33,15 +36,14 @@ const CreateProduct:React.FC = ()=>{
          {
              console.log("Щось пішло не так: ",error);
          }
+         setLoaded(true);
       }
 
       const onChangeHandler = (e: ChangeEvent<HTMLInputElement>| ChangeEvent<HTMLTextAreaElement> |ChangeEvent<HTMLSelectElement> ) => {
-        //console.log(e.target.name, e.target.value);
         setProductDTO({...productDTO, [e.target.name]: e.target.value});
     }
 
       const onFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        //console.log("Select files: ", e.target.files);
         const {target} = e;
         const {files} = target;
         if(files) {
@@ -59,8 +61,9 @@ const CreateProduct:React.FC = ()=>{
     const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
+          setLoaded(false);
             console.log("ProductDTO: ",productDTO);
-            const item = await axios
+           await axios
               .post(`${APP_ENV.REMOTE_HOST_NAME}api/products`, 
               productDTO, 
                 {
@@ -68,10 +71,12 @@ const CreateProduct:React.FC = ()=>{
                     "Content-Type": "multipart/form-data"
                   }
                 });
+                setLoaded(true);
             navigator("/products");
         }catch(error: any) {
             console.log("Щось пішло не так", error);
         }
+        setLoaded(true);
     }
 
 
@@ -80,19 +85,31 @@ const CreateProduct:React.FC = ()=>{
       }); 
       const selectImageList = productDTO.images?.map((image,index)=>{
         return (
-          <div key={index} id="image" className="flex relative">
-            <input
-              type={"button"}
-              value={"x"}
-              className=" absolute bg-slate-400 px-1 cursor-pointer hover:bg-slate-300 active:bg-slate-500 rounded-md top-0 right-0 mr-1 mt-1"
-              onClick={() => {
-                onDeleteHandler(image.name);
-              }}
-            />
-            <img
-              src={URL.createObjectURL(image)}
-              className="flex-1 w-30 rounded-md"
-            />
+          <div key={image + "_" + index} id="image" className="mb-4 imageView">
+            <div className="hideSection">
+              <Link
+                className="text-sm"
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDeleteHandler(image.name);
+                }}
+              >
+                <FaTimes className="m-2 text-3xl text-red-500" />
+              </Link>
+            </div>
+    
+            <div className="relative">
+              <div style={{ height: "150px" }}>
+                <div className="picture-main  bg-slate-200 ">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    className="picture-container rounded-md"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         );
       });
@@ -100,7 +117,7 @@ const CreateProduct:React.FC = ()=>{
       <>
         <div className="p-8 rounded border border-gray-200">
           <h1 className="font-medium text-3xl">Створити новий продукт</h1>
-
+          {!isLoaded && <Loader />}
           <form onSubmit={onSubmitHandler}>
             <div className="mt-8 grid lg:grid-cols-1 gap-4">
               <div>
@@ -196,7 +213,7 @@ const CreateProduct:React.FC = ()=>{
                       </label>
                      
                     ) : (
-                        <div className=" inline-grid grid-cols-4 sm:grid-cols-10 gap-2">
+                      <div className="grid lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 items-center gap-4">
                         {selectImageList}
                         </div>
                     )}

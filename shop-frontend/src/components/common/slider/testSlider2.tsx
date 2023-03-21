@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { APP_ENV } from "../../../env";
 import'./style.css'
 
@@ -8,10 +8,29 @@ interface ISlideProps{
 
 const TestSlider2:React.FC<ISlideProps>= ({imagesList}) => {
 const [activeIndex, setActiveIndex]  = useState<number>(0);
+const timeOutRef = useRef<null | number>(null);
 
-// useEffect(() => {
+const delay: number = 4000;
 
-// }, [imagesList])
+const resetTimeOut = () => {
+  if (timeOutRef.current) {
+    clearTimeout(timeOutRef.current);
+  }
+};
+
+useEffect(() => {
+  resetTimeOut();
+  timeOutRef.current =Number( setTimeout(
+    () =>
+      setActiveIndex((prevIndex: number) =>
+        prevIndex === imagesList.length - 1 ? 0 : prevIndex + 1
+      ),
+    delay
+  ));
+  return () => {
+    resetTimeOut();
+  };
+}, [activeIndex])
 
 
 const handleArrowRight = () => {

@@ -5,6 +5,8 @@ import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
 import Loader from "../../common/loader";
 import { IProductEditDTO, IProductItem } from "../store/type";
+import { FaTimes} from "react-icons/fa";
+import '../../../App.css';
 
 const EditProductPage: React.FC = () => {
   const navigator = useNavigate();
@@ -68,12 +70,10 @@ const EditProductPage: React.FC = () => {
       | ChangeEvent<HTMLTextAreaElement>
       |ChangeEvent<HTMLSelectElement>
   ) => {
-    //console.log(e.target.name, e.target.value);
     setUpdateModel({ ...updateModel, [e.target.name]: e.target.value });
   };
 
   const onFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    //console.log("Select files: ", e.target.files);
     const { target } = e;
     const { files } = target;
     if (files) {
@@ -101,6 +101,7 @@ const EditProductPage: React.FC = () => {
     e.preventDefault();
     try {
     console.log("ProductDTO: ", updateModel);
+    setLoaded(false);
         await axios
           .put(`${APP_ENV.REMOTE_HOST_NAME}api/products/`+updateModel.id,
           updateModel,
@@ -109,8 +110,11 @@ const EditProductPage: React.FC = () => {
                 "Content-Type": "multipart/form-data"
               }
             });
-        navigator("/products");
+         navigator("/products");
+        console.log("Done!");
+        
     }catch(error: any) {
+      setLoaded(true);
         console.log("Щось пішло не так", error);
     }
   };
@@ -125,39 +129,62 @@ const EditProductPage: React.FC = () => {
 
   const currentProductImageList = loadedImageList?.map((image, index) => {
     return (
-      <div key={image+"_"+index} id="image" className="flex relative">
-        <input
-          type={"button"}
-          value={"x"}
-          className=" absolute bg-slate-400 px-1 cursor-pointer hover:bg-slate-300 active:bg-slate-500 rounded-md top-0 right-0 mr-1 mt-1"
-          onClick={() => {
-            onDeleteHandler(image);
-          }}
-        />
-        <img
-          src={`${APP_ENV.REMOTE_HOST_NAME}files/300_` + image}
-          className="flex-1 w-30 rounded-md"
-          alt=""
-        />
+      <div key={image + "_" + index} id="image" className="mb-4 imageView">
+        <div className="hideSection">
+          <Link
+            className="text-sm"
+            to="#"
+            onClick={(e) => {
+              e.preventDefault();
+              onDeleteHandler(image);
+            }}
+          >
+            <FaTimes className="m-2 text-3xl text-red-500" />
+          </Link>
+        </div>
+
+        <div className="relative">
+          <div style={{ height: "150px" }}>
+            <div className="picture-main  bg-slate-200 ">
+              <img
+                src={`${APP_ENV.REMOTE_HOST_NAME}files/300_` + image}
+                className="picture-container rounded-md"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   });
+
   const selectNewImageList = updateModel.images?.map((image, index) => {
     return (
-      <div key={image.name+"_"+index} id="image" className="flex relative">
-        <input
-          type={"button"}
-          value={"x"}
-          className=" absolute bg-slate-400 px-1 cursor-pointer hover:bg-slate-300 active:bg-slate-500 rounded-md top-0 right-0 mr-1 mt-1"
-          onClick={() => {
-            onDeleteHandler(image.name);
-          }}
-        />
-        <img
-          src={URL.createObjectURL(image)}
-          className="flex-1 w-30 rounded-md"
-          alt={image.name}
-        />
+      <div key={image + "_" + index} id="image" className="mb-4 imageView">
+        <div className="hideSection">
+          <Link
+            className="text-sm"
+            to="#"
+            onClick={(e) => {
+              e.preventDefault();
+              onDeleteHandler(image.name);
+            }}
+          >
+            <FaTimes className="m-2 text-3xl text-red-500" />
+          </Link>
+        </div>
+
+        <div className="relative">
+          <div style={{ height: "150px" }}>
+            <div className="picture-main  bg-slate-200 ">
+              <img
+                src={URL.createObjectURL(image)}
+                className="picture-container rounded-md"
+                alt=""
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   });
@@ -243,15 +270,11 @@ const EditProductPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Фото
               </label>
-
-              <div className="mt-1 flex items-center">
-                <div className="inline-block w-full overflow-hidden">
-                  <div className=" inline-grid grid-cols-4 sm:grid-cols-10 gap-2">
+              <div className="grid lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 items-center gap-4">
                     {currentProductImageList}
                     {selectNewImageList}
                   </div>
-                </div>
-              </div>
+           
               <div className="mt-4">
                 {" "}
                 <label
