@@ -30,12 +30,12 @@ const InfoProductPage: React.FC = () => {
 
   const getDataFromServer = async () => {
     try {
-      await axios
-        .get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`)
-        .then((res) => {
-          const { data } = res;
-          setListCategories(data);
-        });
+      // await axios
+      //   .get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`)
+      //   .then((res) => {
+      //     const { data } = res;
+      //     setListCategories(data);
+      //   });
 
       await axios
         .get<IProductItem>(
@@ -43,6 +43,8 @@ const InfoProductPage: React.FC = () => {
         )
         .then((res) => {
           const { data } = res;
+          console.log("data: ",data);
+          
           setProductModel(data);
           setLoaded(true);
         });

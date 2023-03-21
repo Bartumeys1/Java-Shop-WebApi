@@ -34,6 +34,7 @@ const Product = () => {
         });
     } catch (error: any) {
       console.log("Error: ", error);
+      setLoaded(true);
     }
   };
 

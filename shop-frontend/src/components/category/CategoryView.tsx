@@ -16,22 +16,29 @@ const Categories:React.FC=()=>{
     }, [])
 
     const loadData = async ()=>{
-       await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res =>{
-        console.log("Server response",res);
-        const {data} = res;
-        setList(data);
-        setLoaded(true);
-      });
+      try{
+        await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res =>{
+          console.log("Server response",res);
+          const {data} = res;
+          setList(data);
+          setLoaded(true);
+        });
+      }catch(e:any){
+        console.log("Щось пішло не так: ", e);
+      setLoaded(true);
+      }
     }
 
     const elements = list.map((callout) => (
       <div key={callout.name} className="group relative">
         <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
+          <div className="picture-main">
           <img
             src={`${APP_ENV.REMOTE_HOST_NAME}files/600_`+callout.image}
             alt={"callout.imageAlt"}
-            className="h-full w-full object-fill object-center"
+            className="picture-container"
           />
+          </div>
         </div>
         <h3 className="mt-6 text-sm text-gray-900">
           <Link to={"/asd"}>
