@@ -2,8 +2,9 @@ import axios from "axios";
 import { ErrorMessage, Field, Formik } from "formik";
 import {  useState } from "react";
 import {  useNavigate } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { CreateCategoryValidatorShema } from "../store/ValidateCategory";
+import http from "../../../../http_common";
+import { APP_ENV } from "../../../../env";
 
 interface ICreateCategoryItem{
   name: string,
@@ -11,7 +12,7 @@ interface ICreateCategoryItem{
   file:File|null|undefined
 }
 
-const CreateCategory = () =>{
+const AdminCreateCategory = () =>{
    
   const [currentImage, setCurrentImage] = useState<string>(
     "https://cdn3.iconfinder.com/data/icons/photo-tools/65/select-512.png"
@@ -33,11 +34,11 @@ const CreateCategory = () =>{
     
     try{
       category.file=currentFile;
-      const item =await axios.post(`${APP_ENV.REMOTE_HOST_NAME}api/categories`, category,{
+      const item =await http.post(`${APP_ENV.REMOTE_HOST_NAME}api/categories`, category,{
         headers:{"Content-Type":"multipart/form-data"}
       });
             console.log("Server save category", item);
-            navigat("/");
+            navigat("/admin");
     }catch(error:any){
       console.log("Щось пішло не так", error);
     }
@@ -180,5 +181,5 @@ return (
   </>
 );
 }
-export default CreateCategory;
+export default AdminCreateCategory;
 

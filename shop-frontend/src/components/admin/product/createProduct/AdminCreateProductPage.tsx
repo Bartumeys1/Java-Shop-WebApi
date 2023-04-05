@@ -2,12 +2,14 @@ import axios from "axios";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { APP_ENV } from "../../../env";
 import { ICategoryItem } from "../../category/store/type";
-import Loader from "../../common/loader";
 import { IProductCreateDTO } from "../store/type";
+import { APP_ENV } from "../../../../env";
+import http from "../../../../http_common";
+import Loader from "../../../common/loader";
 
-const CreateProduct:React.FC = ()=>{
+
+const AdminCreateProductPage:React.FC = ()=>{
 
     const navigator = useNavigate();
     const [listCategories, setSelectorCategories] = useState<ICategoryItem[]>([]);
@@ -27,7 +29,7 @@ const CreateProduct:React.FC = ()=>{
     const getDataFromServer = async() => {
         try{
           setLoaded(false);
-             await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res=>{
+             await http.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res=>{
                 const {data} = res;
                 setSelectorCategories(data);
              });
@@ -63,7 +65,7 @@ const CreateProduct:React.FC = ()=>{
         try {
           setLoaded(false);
             console.log("ProductDTO: ",productDTO);
-           await axios
+           await http
               .post(`${APP_ENV.REMOTE_HOST_NAME}api/products`, 
               productDTO, 
                 {
@@ -72,7 +74,7 @@ const CreateProduct:React.FC = ()=>{
                   }
                 });
                 setLoaded(true);
-            navigator("/products");
+            navigator("/admin/products/list");
         }catch(error: any) {
             console.log("Щось пішло не так", error);
         }
@@ -259,4 +261,4 @@ const CreateProduct:React.FC = ()=>{
       </>
     );
 }
-export default CreateProduct;
+export default AdminCreateProductPage;

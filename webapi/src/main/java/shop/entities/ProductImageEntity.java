@@ -13,7 +13,7 @@ public class ProductImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(length = 200, nullable = false)
+    @Column(length = 500, nullable = false)
     private String name;
     private int priority;
     @Temporal(TemporalType.TIMESTAMP)

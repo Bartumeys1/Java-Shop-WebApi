@@ -1,10 +1,10 @@
-import axios from "axios";
 import {  useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ICategoryItem } from "../admin/category/store/type";
 import { APP_ENV } from "../../env";
+import http from "../../http_common";
 import Loader from "../common/loader";
 
-import { ICategoryItem } from "./store/type";
 
 const Categories:React.FC=()=>{
 
@@ -17,7 +17,7 @@ const Categories:React.FC=()=>{
 
     const loadData = async ()=>{
       try{
-        await axios.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res =>{
+        await http.get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`).then(res =>{
           console.log("Server response",res);
           const {data} = res;
           setList(data);
@@ -57,20 +57,7 @@ const Categories:React.FC=()=>{
       {!isLoaded &&
       <Loader/>}
         <div className="bg-gray-100">
-          <div className=" text-center pt-5">
-            <Link
-              to="/create-category"
-              className=" bg-green-600 px-4 py-2 rounded-md border border-transparent hover:bg-green-500 text-white text-lg font-bold "
-            >
-              Create category
-            </Link>
-            <Link
-              to="/category-table-test"
-              className=" ml-2 bg-green-600 px-4 py-2 rounded-md border border-transparent hover:bg-green-500 text-white text-lg font-bold "
-            >
-              Table from test
-            </Link>
-          </div>
+         
           <div className=" relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl py-4 sm:py-24 lg:max-w-none lg:py-8">
               <h2 className="text-2xl font-bold text-gray-900">Collections</h2>

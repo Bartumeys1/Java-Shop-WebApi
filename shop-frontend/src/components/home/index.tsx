@@ -1,6 +1,7 @@
 import Categories from "../category";
 
 
+
 const Home = () =>{
     return(
         <>

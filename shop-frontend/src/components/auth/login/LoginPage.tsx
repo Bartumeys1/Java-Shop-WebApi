@@ -1,21 +1,48 @@
 import { ErrorMessage, Field, Formik } from "formik";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { IAuthResponse, ILoginItem } from "./store/types";
 import { LoginValidatorSchema } from "./store/ValideteLogin";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useDispatch } from "react-redux";
+import http from "../../../http_common";
+import { APP_ENV } from "../../../env";
+import { AuthUserToken } from "../action";
 
-interface ILoginItem{
-    email:string,
-    password:string
-}
 
-const Login = () =>{
+
+const LoginPage = () =>{
     const initialValues:ILoginItem={
       email:"",
-        password:""
+        password:"",
+        reCaptchaToken: ""
     }
-    const handleLogin=(item:ILoginItem)=>{
+
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
+    const navigator = useNavigate();
+  
+    const dispatch = useDispatch();
+
+    const handleLogin= async(item:ILoginItem)=>{
         console.log("login data: ",item);
-        //send data and get response
-        //redirect....
+        try {
+          if(!executeRecaptcha)
+            return;
+          //Перевірка чи пройшов перевірку гугл, користувач, чи не є він бот  
+          item.reCaptchaToken=await executeRecaptcha();
+    
+          const resp = await http.post<IAuthResponse>(
+            `${APP_ENV.REMOTE_HOST_NAME}account/login`,
+            item
+          );
+          
+          AuthUserToken(resp.data.token, dispatch);
+    
+          console.log("Login user token", resp);
+          navigator("/");
+        } catch (error: any) {
+          console.log("Щось пішло не так", error);
+        }
     }
 
     const errorMessage = (fieldType: string, color: string = "red") => {
@@ -91,4 +118,4 @@ const Login = () =>{
       </>
     );
 }
-export default Login;
+export default LoginPage;

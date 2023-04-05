@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import CategoryTable from "../../common/categoryTable";
 import { ICategoryItem } from "../store/type";
+import CategoryTable from "../../../common/categoryTable";
 
 const CategoryTableTest =() =>{
     const [list , setList] = useState<ICategoryItem[]>([]);

@@ -1,14 +1,14 @@
-import axios from "axios";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { APP_ENV } from "../../../env";
-import { ICategoryItem } from "../../category/store/type";
-import Loader from "../../common/loader";
+import { APP_ENV } from "../../../../env";
+import Loader from "../../../common/loader";
 import { IProductEditDTO, IProductItem } from "../store/type";
 import { FaTimes} from "react-icons/fa";
-import '../../../App.css';
+import '../../../../App.css';
+import { ICategoryItem } from "../../category/store/type";
+import http from "../../../../http_common";
 
-const EditProductPage: React.FC = () => {
+const AdminEditProductPage: React.FC = () => {
   const navigator = useNavigate();
   const [listCategories, setListCategories] = useState<ICategoryItem[]>([]);
   const [loadedImageList, setLoadedImageList] = useState<string[]>([]);
@@ -30,14 +30,14 @@ const EditProductPage: React.FC = () => {
 
   const getDataFromServer = async () => {
     try {
-         await axios
+         await http
         .get<ICategoryItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/categories`)
         .then((res) => {
           const { data } = res;
           setListCategories(data);      
         });
 
-     await axios
+     await http
        .get<IProductItem>(
          `${APP_ENV.REMOTE_HOST_NAME}api/products/${params.id}`
        )
@@ -102,7 +102,7 @@ const EditProductPage: React.FC = () => {
     try {
     console.log("ProductDTO: ", updateModel);
     setLoaded(false);
-        await axios
+        await http
           .put(`${APP_ENV.REMOTE_HOST_NAME}api/products/`+updateModel.id,
           updateModel,
             {
@@ -110,7 +110,7 @@ const EditProductPage: React.FC = () => {
                 "Content-Type": "multipart/form-data"
               }
             });
-         navigator("/products");
+         navigator("/admin/products/list");
         console.log("Done!");
         
     }catch(error: any) {
@@ -317,4 +317,4 @@ const EditProductPage: React.FC = () => {
     </>
   );
 };
-export default EditProductPage;
+export default AdminEditProductPage;
