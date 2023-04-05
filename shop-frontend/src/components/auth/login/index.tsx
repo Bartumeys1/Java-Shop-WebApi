@@ -1,9 +1,10 @@
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import LoginPage from "./LoginPage";
+import { APP_ENV } from "../../../env";
 
 const Login = () => {
     return (
-        <GoogleReCaptchaProvider reCaptchaKey="6LcOLl8lAAAAABYxJMr7yvqwa0x4p45BsoTT0u1P">
+        <GoogleReCaptchaProvider reCaptchaKey={APP_ENV.REACT_RECAPTCHA_KEY}>
             <LoginPage/>
         </GoogleReCaptchaProvider>
     )

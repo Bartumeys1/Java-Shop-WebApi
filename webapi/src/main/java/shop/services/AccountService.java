@@ -35,11 +35,15 @@ public class AccountService {
     protected static final String RECAPTCHA_URL_TEMPLATE = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
     public AuthResponseDto register(RegisterDto request) {
+        var userEntity =repository.findByEmail(request.getEmail());
+        if(!userEntity.isEmpty())
+            return null;
+
         var user = UserEntity.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
-                .phone("093 839 43 23")
+                .phone("000 000 00 00")
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         repository.save(user);
@@ -73,6 +77,18 @@ public class AccountService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateAccessToken(user);
+        return AuthResponseDto.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthResponseDto loginGoogle(RegisterDto request) {
+
+        var userEntity =repository.findByEmail(request.getEmail());
+        if(userEntity.isEmpty())
+            return register(request);
+
+        var jwtToken = jwtService.generateAccessToken(userEntity.get());
         return AuthResponseDto.builder()
                 .token(jwtToken)
                 .build();

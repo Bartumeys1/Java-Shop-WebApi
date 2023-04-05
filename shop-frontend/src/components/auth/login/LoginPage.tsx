@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import http from "../../../http_common";
 import { APP_ENV } from "../../../env";
 import { AuthUserToken } from "../action";
+import GoogleAuth from "../google/GoogleAuth";
 
 
 
@@ -109,6 +110,7 @@ const LoginPage = () =>{
                     >
                       Create account?
                     </Link>
+                    <GoogleAuth/>
                   </div>
                 </form>
               )}
