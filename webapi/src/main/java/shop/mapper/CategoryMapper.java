@@ -13,9 +13,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     CategoryItemDTO CategoryItemDTOByCategory(CategoryEntity category);
+
     List<CategoryItemDTO> CategoryItemDTOsToCategories(List<CategoryEntity> list);
     @Mapping(target = "image" , ignore = true)
     CategoryEntity CategoryByCreateCategoryGTO(CreateCategoryDTO category);
     @Mapping(target = "image" , ignore = true)
     CategoryEntity CategoryByUpdateCategoryDTO(UpdateCategoryDTO category);
+    @Mapping(target = "image" , ignore = true)
+    CategoryEntity CategoryByCategoryItemDTO(CategoryItemDTO category);
 }

@@ -12,6 +12,7 @@ import AdminCreateProductPage from "./components/admin/product/createProduct";
 import AdminEditProductPage from "./components/admin/product/editProduct";
 import AdminProductsPage from "./components/admin/product";
 import AdminHome from "./components/admin/home";
+import Profile from "./components/profile";
 
 const App =() => {
     return (
@@ -20,17 +21,21 @@ const App =() => {
           <Route index element={<Home />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="registration" element={<Registration />} />
+          <Route path="products/category/:category_id/list" element={<Product />} />
           <Route path="products" element={<Product />} />
           <Route path="product/info/:id" element={<InfoProductPage />} />
+          <Route path="profile" element={<Profile />} />
         <Route path="*" element={<NotFoundPage/>}/>
         </Route>
 
         <Route path="/admin" element={<AdminLayout/>}>
           <Route index element={<AdminHome />} />
           <Route path="categories/create" element={<AdminCreateCategory />} />
+          <Route path="products/category/:category_id/list" element={<AdminProductsPage />} />
           <Route path="products/list" element={<AdminProductsPage />} />
           <Route path="product/create" element={<AdminCreateProductPage />} />
           <Route path="product/edit/:id" element={<AdminEditProductPage />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     );

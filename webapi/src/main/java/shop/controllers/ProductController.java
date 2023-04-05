@@ -61,4 +61,11 @@ public class ProductController {
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
+    @GetMapping("/category{id}")
+    public ResponseEntity<List<ProductItemDTO>> getProductsByCategoryId(@PathVariable("id") int id) {
+        var result = _productService.getByCategoryId(id);
+        if (result != null)
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { IProductItem } from "./store/type";
 import { APP_ENV } from "../../../env";
 import http from "../../../http_common";
@@ -11,9 +11,13 @@ import Loader from "../../common/loader";
 const AdminProductsPage = () => {
   const [list, setlist] = useState<IProductItem[]>([]);
   const [isLoaded , setLoaded] = useState<boolean>(false);
+  const {category_id}=useParams();
 
   useEffect(() => {
+    if(category_id === undefined)
     getAllDataFromServer();
+    else
+    getAllDataByCategoryId(Number(category_id));
   }, []);
 
   const deleteProductHandler  = async (id:number) => {
@@ -29,6 +33,21 @@ const AdminProductsPage = () => {
     try {
       await axios
         .get<IProductItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/products`)
+        .then((result) => {
+          const { data } = result;
+          setlist(data);
+          setLoaded(true);
+        });
+    } catch (error: any) {
+      console.log("Error: ", error);
+      setLoaded(true);
+    }
+  };
+  
+  const getAllDataByCategoryId = async (id:number) => {
+    try {
+      await http
+        .get<IProductItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/products/category${id}`)
         .then((result) => {
           const { data } = result;
           setlist(data);

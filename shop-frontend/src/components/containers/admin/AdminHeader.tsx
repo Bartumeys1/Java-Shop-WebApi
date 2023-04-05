@@ -48,7 +48,7 @@ const AdminHeader = () => {
           <Link to="/admin" className="text-base font-medium text-gray-500 hover:text-gray-900">
               Категорії
             </Link>
-            <Link to="products/list" className="text-base font-medium text-gray-500 hover:text-gray-900">
+            <Link to={`/admin/products/list`} className="text-base font-medium text-gray-500 hover:text-gray-900">
               Продукти
             </Link>
             <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900">
@@ -61,7 +61,7 @@ const AdminHeader = () => {
           {isAuth ? (
                 <>
                   <Link
-                    to="/profile"
+                    to="/admin/profile"
                     className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
                   >
                     {user?.email}

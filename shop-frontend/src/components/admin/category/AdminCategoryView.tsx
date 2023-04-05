@@ -43,7 +43,7 @@ const AdminCategories:React.FC=()=>{
           </div>
         </div>
         <h3 className="mt-6 text-sm text-gray-900">
-          <Link to={"/asd"}>
+          <Link to={`/admin/products/category/${callout.id}/list`}>
             <span className="absolute inset-0" />
             <p className="font-bold text-xl text-center">
             {callout.name}

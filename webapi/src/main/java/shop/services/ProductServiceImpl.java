@@ -2,13 +2,16 @@ package shop.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import shop.dto.account.RegisterDto;
 import shop.dto.product.ProductCreateDTO;
 import shop.dto.product.ProductEditDTO;
 import shop.dto.product.ProductItemDTO;
 import shop.entities.CategoryEntity;
 import shop.entities.ProductEntity;
 import shop.entities.ProductImageEntity;
+import shop.interfaces.CategoryService;
 import shop.interfaces.ProductService;
+import shop.mapper.CategoryMapper;
 import shop.mapper.ProductMapper;
 import shop.repositories.ProductImageRepository;
 import shop.repositories.ProductRepository;
@@ -23,8 +26,11 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository _imageRepository;
     private final ProductRepository _productRepository;
+    private final CategoryService _categoryService;
     private final StorageService _storageService;
     private final ProductMapper _productMapper;
+    private final CategoryMapper _categoryMapper;
+
 
     @Override
     public ProductEntity create(ProductCreateDTO model) {
@@ -53,6 +59,26 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductItemDTO> get() {
         List<ProductEntity> list = _productRepository.findAll();
+
+        List<ProductItemDTO> resultList = new ArrayList<>();
+        for (ProductEntity productEntity : list) {
+            ProductItemDTO item = _productMapper.ProductItemDTOByProductEntity(productEntity);
+            for (var image : productEntity.getProductImages())
+                item.getImages().add(image.getName());
+
+            resultList.add(item);
+        }
+        return resultList;
+    }
+
+    @Override
+    public List<ProductItemDTO> getByCategoryId(int id) {
+        var catDTO = _categoryService.get(id);
+        CategoryEntity cat = _categoryMapper.CategoryByCategoryItemDTO(catDTO);
+
+        var list = _productRepository.findByCategory(cat);
+        if(list.isEmpty())
+            return null;
 
         List<ProductItemDTO> resultList = new ArrayList<>();
         for (ProductEntity productEntity : list) {

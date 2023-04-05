@@ -10,8 +10,10 @@ import java.util.List;
 public interface ProductService {
     ProductEntity create(ProductCreateDTO model);
     List<ProductItemDTO> get();
+    List<ProductItemDTO> getByCategoryId(int id);
     ProductItemDTO get (int id);
     void delete(int id);
     ProductItemDTO edit(int id, ProductEditDTO model);
+
 
 }

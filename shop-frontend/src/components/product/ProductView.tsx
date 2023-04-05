@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { APP_ENV } from "../../env";
 import Loader from "../common/loader";
 import { IProductItem } from "../admin/product/store/type";
@@ -8,9 +8,14 @@ import http from "../../http_common";
 const Product = () => {
   const [list, setlist] = useState<IProductItem[]>([]);
   const [isLoaded , setLoaded] = useState<boolean>(false);
+  const {category_id} = useParams();
 
   useEffect(() => {
+    console.log("category id : ",category_id);
+if(category_id === undefined)
     getAllDataFromServer();
+    else
+    getAllDataByCategoryId(Number(category_id));
   }, []);
 
 
@@ -18,6 +23,21 @@ const Product = () => {
     try {
       await http
         .get<IProductItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/products`)
+        .then((result) => {
+          const { data } = result;
+          setlist(data);
+          setLoaded(true);
+        });
+    } catch (error: any) {
+      console.log("Error: ", error);
+      setLoaded(true);
+    }
+  };
+
+  const getAllDataByCategoryId = async (id:number) => {
+    try {
+      await http
+        .get<IProductItem[]>(`${APP_ENV.REMOTE_HOST_NAME}api/products/category${id}`)
         .then((result) => {
           const { data } = result;
           setlist(data);
