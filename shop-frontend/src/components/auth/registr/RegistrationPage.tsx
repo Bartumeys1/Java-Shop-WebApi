@@ -6,16 +6,9 @@ import { useDispatch } from "react-redux";
 import http from "../../../http_common";
 import { IAuthResponse } from "../login/store/types";
 import { APP_ENV } from "../../../env";
-import { AuthUserToken } from "../action";
+import { AuthUserToken, RegistartionUser } from "../action";
+import { IRegistration } from "./store/types";
 
-interface IRegistration{
-    firstname:string,
-    lastname:string,
-    email:string,
-    password:string,
-    confirm:string,
-    reCaptchaToken:string
-}
 
 const RegistrationPage = ()=>{
   const initialValues: IRegistration = {
@@ -43,7 +36,7 @@ const RegistrationPage = ()=>{
         `${APP_ENV.REMOTE_HOST_NAME}account/register`,
         item
       );
-      
+      RegistartionUser(item , dispatch);
       AuthUserToken(resp.data.token, dispatch);
 
       navigator("/");
@@ -62,7 +55,7 @@ const RegistrationPage = ()=>{
 
   return (
     <>
-      <div className="relative w-full flex flex-col justify-center mt-[150px] ">
+      <div className="relative w-full flex flex-col justify-center mt-[20px] ">
         <div className="max-w-[500px] w-full mx-auto bg-gray-50 p-4">
           <Formik initialValues={initialValues} onSubmit={onNext} validationSchema={RegistrationValidatorShema}>
             {(formik) => (

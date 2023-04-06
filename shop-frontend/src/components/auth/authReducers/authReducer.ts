@@ -1,4 +1,5 @@
-import { AuthUserActionType, IAuthUser, IUser } from "./login/store/types";
+import { AuthUserActionType, IAuthUser, IUser } from "../login/store/types";
+
 
 
 const initState : IAuthUser = {
@@ -15,6 +16,14 @@ export const AuthReducer = (state=initState, action: any) : IAuthUser => {
                 user: user
             }
         }
+        case AuthUserActionType.GOOGLE_LOGIN_USER: {
+            const user : IUser= action.payload as IUser;
+            return {
+                ...state,
+                isAuth: true,
+                user: user
+            }
+        }
         case AuthUserActionType.LOGOUT_USER: {
             
             return {
@@ -22,6 +31,7 @@ export const AuthReducer = (state=initState, action: any) : IAuthUser => {
                 isAuth: false,
                 user: undefined
             }
+
         }
     }
     return state;

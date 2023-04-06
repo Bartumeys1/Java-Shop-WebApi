@@ -11,113 +11,119 @@ import GoogleAuth from "../google/GoogleAuth";
 
 
 
-const LoginPage = () =>{
-    const initialValues:ILoginItem={
-      email:"",
-        password:"",
-        reCaptchaToken: ""
-    }
+const LoginPage = () => {
+  const initialValues: ILoginItem = {
+    email: "",
+    password: "",
+    reCaptchaToken: ""
+  }
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const navigator = useNavigate();
+  const dispatch = useDispatch();
 
-    const navigator = useNavigate();
-  
-    const dispatch = useDispatch();
+  const handleLogin = async (item: ILoginItem) => {
+    console.log("login data: ", item);
+    try {
+      if (!executeRecaptcha)
+        return;
+      //Перевірка чи пройшов перевірку гугл, користувач, чи не є він бот  
+      item.reCaptchaToken = await executeRecaptcha();
 
-    const handleLogin= async(item:ILoginItem)=>{
-        console.log("login data: ",item);
-        try {
-          if(!executeRecaptcha)
-            return;
-          //Перевірка чи пройшов перевірку гугл, користувач, чи не є він бот  
-          item.reCaptchaToken=await executeRecaptcha();
-    
-          const resp = await http.post<IAuthResponse>(
-            `${APP_ENV.REMOTE_HOST_NAME}account/login`,
-            item
-          );
-          
-          AuthUserToken(resp.data.token, dispatch);
-    
-          console.log("Login user token", resp);
-          navigator("/");
-        } catch (error: any) {
-          console.log("Щось пішло не так", error);
-        }
-    }
-
-    const errorMessage = (fieldType: string, color: string = "red") => {
-      return (
-        <ErrorMessage name={fieldType}>
-          {(msg) => <div style={{ color: color }}>{msg}</div>}
-        </ErrorMessage>
+      const resp = await http.post<IAuthResponse>(
+        `${APP_ENV.REMOTE_HOST_NAME}account/login`,
+        item
       );
-    };
 
+      AuthUserToken(resp.data.token, dispatch);
+
+      console.log("Login user token", resp);
+      navigator("/");
+    } catch (error: any) {
+      console.log("Щось пішло не так", error);
+    }
+  }
+
+  const errorMessage = (fieldType: string, color: string = "red") => {
     return (
-      <>
-        <div className="relative w-full flex flex-col justify-center mt-[150px] ">
-          <div className="max-w-[400px] w-full mx-auto bg-gray-50 p-4">
-            <Formik 
-            initialValues={initialValues} 
-            onSubmit={handleLogin}
-            validationSchema ={LoginValidatorSchema}>
-              {(formik) => (
-                <form onSubmit={formik.handleSubmit}>
-                  <h2 className=" text-4xl font-bold text-center py-6 flex flex-row justify-center">
-                    <img
-                      className="h-8 sm:h-10 pr-4"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                      alt=""
-                    />
-                    LOGIN
-                  </h2>
-                  <div className="flex flex-col py-2">
-                    <label htmlFor="email" className="text-lg font-[500]">
-                    Email
-                    </label>
-                    <Field
-                      type="text"
-                      id="email"
-                      name="email"
-                      className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
-                    />
-                    {errorMessage("email")}
-                  </div>
-                  <div className="flex flex-col py-2">
-                    <label htmlFor="password" className="text-lg font-[500]">
-                      Password
-                    </label>
-                    <Field
-                      type="password"
-                      id="password"
-                      name="password"
-                      className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
-                    />
-                    {errorMessage("password")}
-                  </div>
-                  <div className="flex flex-col py-2 ">
-                    <button
-                    disabled={!formik.isValid}
-                      type="submit"
-                      className={`w-full py-2 my-2 text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-700`}
-                    >
-                      Sign In
-                    </button>
-                    <Link
-                      to="/registration"
-                      className=" text-center text-indigo-500 text-lg mt-3"
-                    >
-                      Create account?
-                    </Link>
-                    <GoogleAuth/>
-                  </div>
-                </form>
-              )}
-            </Formik>
-          </div>
-        </div>
-      </>
+      <ErrorMessage name={fieldType}>
+        {(msg) => <div style={{ color: color }}>{msg}</div>}
+      </ErrorMessage>
     );
+  };
+
+  return (
+    <>
+      <div className="relative w-full flex flex-col justify-center mt-[50px] ">
+        <div className="max-w-[400px] w-full mx-auto bg-gray-50 p-4">
+          <Formik
+            initialValues={initialValues}
+            onSubmit={handleLogin}
+            validationSchema={LoginValidatorSchema}>
+            {(formik) => (
+              <form onSubmit={formik.handleSubmit}>
+                <h2 className=" text-4xl font-bold text-center py-6 flex flex-row justify-center">
+                  <img
+                    className="h-8 sm:h-10 pr-4"
+                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                    alt=""
+                  />
+                  ВХІД
+                </h2>
+                <div className="flex flex-col py-2">
+                  <label htmlFor="email" className="text-lg font-[500]">
+                    Ел. почта
+                  </label>
+                  <Field
+                    type="text"
+                    id="email"
+                    name="email"
+                    className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
+                  />
+                  {errorMessage("email")}
+                </div>
+                <div className="flex flex-col py-2">
+                  <label htmlFor="password" className="text-lg font-[500]">
+                    Пароль
+                  </label>
+                  <Field
+                    type="password"
+                    id="password"
+                    name="password"
+                    className="border rounded-sm focus:rounded-sm focus:outline-none focus:border-indigo-400 w-full relative text-xl p-1"
+                  />
+                  {errorMessage("password")}
+                </div>
+                <div className="flex flex-col py-2 ">
+                  <button
+                    disabled={!formik.isValid}
+                    type="submit"
+                    className={`w-full py-2 my-2 text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-700`}
+                  >
+                    Вхід
+                  </button>
+                  <Link
+                    to="/registration"
+                    className=" text-center text-indigo-500 text-lg mt-3"
+                  >
+                    Зареєструватися ?
+                  </Link>
+                  <div className="inline-flex items-center justify-center w-full">
+                    <hr className="w-full h-1 my-4 bg-gray-300 border-0 rounded" />
+                    <div className="absolute px-4 -translate-x-1/2 bg-white left-1/2">
+                      {"або"}
+                    </div>
+                  </div>
+                  <div className="mx-auto my-4">
+                    <GoogleAuth />
+                  </div>
+                </div>
+              </form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </>
+  );
 }
 export default LoginPage;

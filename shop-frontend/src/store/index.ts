@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-
 import thunk from "redux-thunk";
-import { AuthReducer } from "../components/auth/authReducer";
+//Reducers
+import { AuthReducer } from "../components/auth/authReducers/authReducer";
+import { RegistrateReducer } from "../components/auth/authReducers/registrationReducer";
+
+
 
 export const rootReducer = combineReducers({
    auth: AuthReducer,
+   registrate:RegistrateReducer,
 });
 
 export const store = configureStore({

@@ -10,6 +10,7 @@ export interface IAuthResponse {
 
 export enum AuthUserActionType {
     LOGIN_USER="AUTH_LOGIN_USER",
+    GOOGLE_LOGIN_USER="AUTH_GOOGLE_LOGIN_USER",
     LOGOUT_USER="AUTH_LOGOUT_USER"
 }
 

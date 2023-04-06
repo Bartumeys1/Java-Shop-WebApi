@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useSelector } from "react-redux";
 import { IAuthUser } from "../auth/login/store/types";
@@ -6,12 +6,29 @@ import { IAuthUser } from "../auth/login/store/types";
 const UserProfile = () =>{
     const { executeRecaptcha } = useGoogleReCaptcha();
     const {isAuth, user} = useSelector((store: any)=> store.auth as IAuthUser);
-    
+    const [currentImage, setCurrentImage] = useState<string>(
+        "https://cdn3.iconfinder.com/data/icons/photo-tools/65/select-512.png"
+      );
+
+
      useEffect(()=>{
 
         console.log(user);
      },[]);
 
+     const handlerSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files.length) {
+          const file = files[0];
+          setCurrentImage(URL.createObjectURL(file));
+        } else {
+          alert("Оберіть файл зображення");
+        }
+        e.target.value = "";
+      };
+
+
+      const stringRoles = user?.roles.join(", ");
 
     return (
         <>
@@ -21,11 +38,30 @@ const UserProfile = () =>{
             <div className="w-full md:w-3/12 md:mx-2">
                 {/* <!-- Profile Card --> */}
                 <div className="bg-white p-3 border-t-4 border-green-400">
-                    <div className="image overflow-hidden">
-                        <img className="h-auto w-full mx-auto"
-                            src="https://lavinephotography.com.au/wp-content/uploads/2017/01/PROFILE-Photography-112.jpg"
-                            alt=""/>
-                    </div>
+                      <div className="image overflow-hidden">
+                        <label
+                          htmlFor="file"
+                          className="block text-lg font-semibold text-gray-700"
+                        >
+                          Foto
+                          <img
+                            src={currentImage}
+                            style={{ cursor: "pointer" }}
+                            width="150"
+                            className="h-auto w-[200px] mx-auto"
+                          />
+                        </label>
+                        <input
+                        value = ""
+                          type="file"
+                          id="file"
+                          name="file"
+                          className="hidden"
+                           onChange={handlerSelectImage}
+                        />
+
+                      </div>
+
                     <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">{user?.email}</h1>
                     <h3 className="text-gray-600 font-lg text-semibold leading-6">Мій опис:</h3>
                     <p className="text-sm text-gray-500 hover:text-gray-600 leading-6">Опис про мене...</p>
@@ -96,6 +132,10 @@ const UserProfile = () =>{
                                 <div className="px-4 py-2 font-semibold">Birthday</div>
                                 <div className="px-4 py-2">{user?.email}</div>
                             </div>
+                            <div className="grid grid-cols-2">
+                                <div className="px-4 py-2 font-semibold">Roles.</div>
+                                <div className="px-4 py-2">  {stringRoles}   </div>
+                            </div>
                         </div>
                     </div>
                     <button
@@ -103,7 +143,7 @@ const UserProfile = () =>{
                         Full Information</button>
                 </div>
                 {/* <!-- End of about section --> */}
-
+               
                 <div className="my-4"></div>
 
                 {/* <!-- Experience and education --> */}

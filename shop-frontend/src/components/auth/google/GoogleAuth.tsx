@@ -2,13 +2,12 @@ import { useEffect } from "react";
 import http from "../../../http_common";
 import { IAuthResponse } from "../login/store/types";
 import { APP_ENV } from "../../../env";
-import { AuthUserToken } from "../action";
+import { AuthGoogleUserToken } from "../action";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 const GoogleAuth = () => {
     const navigator = useNavigate();
-  
     const dispatch = useDispatch();
 
     const handleGoogleLogin = async (item: any) => {
@@ -23,7 +22,7 @@ const GoogleAuth = () => {
               token
             );
             
-            AuthUserToken(resp.data.token, dispatch);
+            AuthGoogleUserToken(resp.data.token, dispatch);
       
             console.log("Login user token", resp);
             navigator("/");
@@ -39,7 +38,7 @@ const GoogleAuth = () => {
           callback: handleGoogleLogin
         });
         window.google.accounts!.id.renderButton(document.getElementById("signInDiv"),{
-          theme: "outline", size: "small"
+          theme: "outline", size: "large"
         });
       }, []);
 
